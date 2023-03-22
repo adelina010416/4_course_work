@@ -1,4 +1,4 @@
-from dao.genre import GenreDAO
+from dao.genres_dao import GenreDAO
 
 
 class GenreService:
