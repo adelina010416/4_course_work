@@ -1,5 +1,6 @@
 from flask import request
 from flask_restx import Resource, Namespace
+from sqlalchemy.exc import IntegrityError
 
 from dao.model.director import DirectorSchema
 from decorators import auth_required, admin_required
@@ -12,14 +13,18 @@ director_ns = Namespace('directors')
 class DirectorsView(Resource):
     @auth_required
     def get(self):
-        rs = director_service.get_all()
+        pages = request.args.get("page")
+        rs = director_service.get_all(pages)
         res = DirectorSchema(many=True).dump(rs)
         return res, 200
 
     @admin_required
     def post(self):
         data = request.json
-        director_service.create(data)
+        try:
+            director_service.create(data)
+        except IntegrityError:
+            return "This genre is already used. Please, try again."
         return "", 201
 
     @admin_required

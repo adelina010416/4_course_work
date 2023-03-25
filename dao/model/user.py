@@ -6,8 +6,8 @@ from dao.model.genre import Genre
 
 class User(db.Model):
     __tablename__ = 'user'
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
-    email = db.Column(db.String, nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String, nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
     role = db.Column(db.String)
     name = db.Column(db.String)
@@ -19,7 +19,7 @@ class User(db.Model):
 class UserSchema(Schema):
     __tablename__ = 'user'
     id = fields.Int()
-    username = fields.Str()
+    email = fields.Str()
     password = fields.Str()
     role = fields.Str()
     name = fields.Str()

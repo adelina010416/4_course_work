@@ -1,4 +1,5 @@
 from dao.model.movie import Movie
+from sqlalchemy import desc
 
 
 class MovieDAO:
@@ -8,16 +9,21 @@ class MovieDAO:
     def get_one(self, bid):
         return self.session.query(Movie).get(bid)
 
-    def get_all(self):
-        # t = self.session.query(Movie)
-        # if "director_id" in filters:
-        #     t = t.filter(Movie.director_id == filters.get("director_id"))
-        # if "genre_id" in filters:
-        #     t = t.filter(Movie.genre_id == filters.get("genre_id"))
-        # if "year" in filters:
-        #     t = t.filter(Movie.year == filters.get("year"))
-        # return t.all()
-        return self.session.query(Movie).all()
+    def get_all(self, filters):
+        t = self.session.query(Movie)
+        if filters["director_id"]:
+            t = t.filter(Movie.director_id == filters.get("director_id"))
+        if filters["genre_id"]:
+            t = t.filter(Movie.genre_id == filters.get("genre_id"))
+        if filters["year"]:
+            t = t.filter(Movie.year == filters.get("year"))
+        if filters["status"] == "new":
+            t = t.order_by(Movie.year.desc())
+        if filters["page"]:
+            page = int(filters.get("page"))
+            return t.paginate(page, 12, False).items
+
+        return t.all()
 
     def get_by_director_id(self, val):
         return self.session.query(Movie).filter(Movie.director_id == val).all()

@@ -8,6 +8,7 @@ from views.directors import director_ns
 from views.genres import genre_ns
 from views.movies import movie_ns
 from views.users import user_ns
+from views.favorites import favorite_ns
 
 
 def create_app(config_object):
@@ -25,6 +26,7 @@ def register_extensions(app):
     api.add_namespace(movie_ns)
     api.add_namespace(user_ns)
     api.add_namespace(auth_ns)
+    api.add_namespace(favorite_ns)
 
 
 app = create_app(Config())

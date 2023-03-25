@@ -1,5 +1,6 @@
 from flask import request
 from flask_restx import Resource, Namespace
+from sqlalchemy.exc import IntegrityError
 
 from dao.model.genre import GenreSchema
 from decorators import auth_required, admin_required
@@ -12,14 +13,18 @@ genre_ns = Namespace('genres')
 class GenresView(Resource):
     @auth_required
     def get(self):
-        rs = genre_service.get_all()
+        page = request.args.get("page")
+        rs = genre_service.get_all(page)
         res = GenreSchema(many=True).dump(rs)
         return res, 200
 
     @admin_required
     def post(self):
         data = request.json
-        genre_service.create(data)
+        try:
+            genre_service.create(data)
+        except IntegrityError:
+            return "This genre is already used. Please, try again."
         return "", 201
 
     @admin_required
